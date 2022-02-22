@@ -1,1 +1,1 @@
-# comb_math
+# Safarov Tahir Infotech
