@@ -1,70 +1,89 @@
 #include "solveKnapsack.h"
 #include <math.h>
 #include <iostream>
-
-std::vector<int> answer;
+#include <algorithm>
 
 namespace
 {
 	using namespace std;
-
-	GivenData data;
-	vector<vector<int>> table;
-
-	void Init(GivenData const& givenData)
+	
+	bool GenerateNextPermutation(vector<int>& itemsToPick)
 	{
-		data = givenData;
-		for (size_t i = 0; i < data.itemsCount; i++)
+		int i = itemsToPick.size() - 1;
+		while (i >= 0)
 		{
-			table.push_back({});
-			for (size_t j = 0; j < data.maxWeight; j++)
+			itemsToPick[i]--;
+			if (itemsToPick[i] == 0)
 			{
-				table[i].push_back(0);
+				return true;
 			}
+			itemsToPick[i] = 1;
+			i--;
 		}
 
-		for (size_t i = 1; i < data.itemsCount; i++)
-		{
-			for (size_t j = 1; j < data.maxWeight; j++)
-			{
-				if (j >= data.weights[i])
-				{
-					table[i][j] = max(table[i - 1][j], table[i - 1][j - data.weights[i]] + data.prices[i]);
-				}
-				else
-				{
-					table[i][j] = table[i - 1][j];
-				}
-			}
-		}
+		return false;
 	}
 
-	void SolveKnapsackRecursive(int k, int s) // k = item, s = weight
+	int GetTotalPrice(GivenData const& givenData, vector<int> const& itemsToPick)
 	{
-		if (table[k][s] == 0)
+		int weight = 0;
+		int price = 0;
+		for (int i = 0; i < itemsToPick.size(); i++)
 		{
-			return;
+			if (itemsToPick[i] == 1)
+			{
+				weight += givenData.weights[i];
+				price += givenData.prices[i];
+				if (weight > givenData.maxWeight)
+				{
+					return -1;
+				}
+			}
+		}
+		return price;
+	}
+
+	vector<int> GetResultItemsSet(vector<int> const& itemsToPick)
+	{
+		vector<int> resultSet;
+
+		for (int i = 0; i < itemsToPick.size(); i++)
+		{
+			if (itemsToPick[i] == 1)
+			{
+				resultSet.push_back(i + 1);
+			}
 		}
 
-		if (table[k - 1][s] == table[k][s])
+		return resultSet;
+	}
+
+	void PrintVector(vector<int> const& vec)
+	{
+		for (auto const& item : vec)
 		{
-			SolveKnapsackRecursive(k - 1, s);
+			cout << item << " ";
 		}
-		else
-		{
-			SolveKnapsackRecursive(k - 1, s - data.weights[k]);
-			cout << "here " << k << endl;
-			answer.push_back(k);
-		}
+		cout << endl;
 	}
 }
 
 
 vector<int> SolveKnapsack(GivenData const& givenData)
 {
-	Init(givenData);
+	vector<int> itemsToPick(givenData.itemsCount, 1);
 
-	SolveKnapsackRecursive(1, 1);
+	vector<int> bestSet = {};
+	int maxPrice = -1;
+	do
+	{
+		int newPrice = GetTotalPrice(givenData, itemsToPick);
+		if (newPrice > maxPrice)
+		{
+			maxPrice = newPrice;
+			bestSet = itemsToPick;
+		}
+	} while (GenerateNextPermutation(itemsToPick));
 
-	return answer;
+	return GetResultItemsSet(bestSet);
 }
