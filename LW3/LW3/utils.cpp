@@ -6,13 +6,43 @@ namespace
 {
 	using namespace std;
 
+    bool cyclesFound = false;
+    vector<size_t> graphFaces = { };
+    vector<size_t> faceEnds = { };
+
+    bool IsAllUsed(vector<bool> const& used)
+    {
+        for (auto const& el : used)
+        {
+            if (!el)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     void FindCycleDFS(Graph const& graph, vector<bool>& used, size_t const& vertex, size_t const& lastVertex)
     {
-        cout << "In with vertex " << vertex << endl;
+        if (cyclesFound)
+        {
+            return;
+        }
+        // cout << "In with vertex " << lastVertex << "->" << vertex << endl;
         if (used[vertex])
         {
-            cout << "Cycle found" << endl;
-            exit(0);
+            // cout << "Cycle found" << endl;
+            cyclesFound = IsAllUsed(used);
+            graphFaces.push_back({ graphFaces.size() });
+            cout << "{" << lastVertex << "," << vertex << "}" << "->";
+            for (auto const& graphFace : graphFaces)
+            {
+               cout << graphFace << ", ";
+            }
+            // faceEnds[graphFaces[graphFaces.size() - 1]] = vertex;
+            cout << endl;
+            return;
         }
         used[vertex] = true;
         for (auto& vertex2 : graph.GetAdj(vertex))
@@ -22,13 +52,25 @@ namespace
                 FindCycleDFS(graph, used, vertex2, vertex);
             }
         }
+
+        cout << "{" << lastVertex << "," << vertex << "}" << "->";
+        for (auto const& graphFace : graphFaces)
+        {
+            cout << graphFace << ", ";
+            /*if (faceEnds[graphFace] == vertex)
+            {
+                faceEnds.pop_back();
+            }*/
+        }
+        cout << endl;
     }
 
     optional<int> FindUnusedNeighbour(vector<Graph::Vertex> const& adj, vector<bool>& used)
     {
         for (size_t i = 0; i < adj.size(); i++)
         {
-            if (!used[i]) {
+            if (!used[adj[i]])
+            {
                 return i;
             }
         }
@@ -40,15 +82,8 @@ namespace
         auto size = graph.GetSize();
         vector<bool> used;
         used.assign(size, false);
-
-        for (size_t i = 0; i < size; i++)
-        {
-            auto unusedVertex = FindUnusedNeighbour(graph.GetAdj(i), used);
-            if (unusedVertex)
-            {
-                FindCycleDFS(graph, used, *unusedVertex, i);
-            }
-        }
+        
+        FindCycleDFS(graph, used, 0, 0);
     }
 }
 
