@@ -2,95 +2,66 @@
 #include <fstream>
 #include <algorithm>
 
+#include "GraphFaces.h"
+
 namespace
 {
 	using namespace std;
-
-    bool cyclesFound = false;
-    vector<size_t> graphFaces = { };
-    vector<size_t> faceEnds = { };
-
-    bool IsAllUsed(vector<bool> const& used)
-    {
-        for (auto const& el : used)
-        {
-            if (!el)
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    void FindCycleDFS(Graph const& graph, vector<bool>& used, size_t const& vertex, size_t const& lastVertex)
-    {
-        if (cyclesFound)
-        {
-            return;
-        }
-        // cout << "In with vertex " << lastVertex << "->" << vertex << endl;
-        if (used[vertex])
-        {
-            // cout << "Cycle found" << endl;
-            cyclesFound = IsAllUsed(used);
-            graphFaces.push_back({ graphFaces.size() });
-            cout << "{" << lastVertex << "," << vertex << "}" << "->";
-            for (auto const& graphFace : graphFaces)
-            {
-               cout << graphFace << ", ";
-            }
-            // faceEnds[graphFaces[graphFaces.size() - 1]] = vertex;
-            cout << endl;
-            return;
-        }
-        used[vertex] = true;
-        for (auto& vertex2 : graph.GetAdj(vertex))
-        {
-            if (vertex2 != vertex && vertex2 != lastVertex)
-            {
-                FindCycleDFS(graph, used, vertex2, vertex);
-            }
-        }
-
-        cout << "{" << lastVertex << "," << vertex << "}" << "->";
-        for (auto const& graphFace : graphFaces)
-        {
-            cout << graphFace << ", ";
-            /*if (faceEnds[graphFace] == vertex)
-            {
-                faceEnds.pop_back();
-            }*/
-        }
-        cout << endl;
-    }
-
-    optional<int> FindUnusedNeighbour(vector<Graph::Vertex> const& adj, vector<bool>& used)
-    {
-        for (size_t i = 0; i < adj.size(); i++)
-        {
-            if (!used[adj[i]])
-            {
-                return i;
-            }
-        }
-        return nullopt;
-    }
-
-    void FindCycles(Graph const& graph)
-    {
-        auto size = graph.GetSize();
-        vector<bool> used;
-        used.assign(size, false);
-        
-        FindCycleDFS(graph, used, 0, 0);
-    }
 }
 
 Graph GetDualGraph(Graph const& graph)
 {
     Graph dualGraph;
-    FindCycles(graph);
+    
+    // MAIN
+
+    vector<Vertex> vertices =
+    {
+        Vertex(1, Point2D(-4, 4)),
+        Vertex(2, Point2D(-1, 5)),
+        Vertex(3, Point2D(3, 4)),
+        Vertex(4, Point2D(4, 1)),
+        Vertex(5, Point2D(0, -2)),
+        Vertex(6, Point2D(-1, 3)),
+        Vertex(7, Point2D(2, 2)),
+    };
+
+    vector<vector<int>> graphAdj =
+    {
+        {1, 2}, {1, 6}, {1, 5}, {2, 6}, {2, 3}, {3, 7}, {7, 4}, {3, 4}, {5, 4}, {6, 5},
+    };
+    vector<Edge> edges;
+    edges.resize(graphAdj.size() * 2); // HZ
+    for (int i = 0; i < graphAdj.size(); i++)
+    {
+        Vertex from = vertices[graphAdj[i][0] - 1];
+        Vertex to = vertices[graphAdj[i][1] - 1];
+        edges[2 * i] = Edge(from, to);
+        edges[2 * i + 1] = Edge(to, from);
+
+        edges[2 * i].SetReverseEdge(edges[2 * i + 1]);
+        edges[2 * i + 1].SetReverseEdge(edges[2 * i]);
+    }
+
+    for (Vertex& vertex : vertices)
+    {
+        vertex.SortEdges();
+    }
+
+    vector<vector<Edge>> faces = {};
+    for (Edge edge : edges)
+    {
+        if (edge.visited)
+        {
+            continue;
+        }
+
+        vector<Edge> face = {};
+        faces.push_back(face);
+        Edge e = edge;
+    }
+
+    // MAIN
 
     return dualGraph;
 }
