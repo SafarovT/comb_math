@@ -129,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\LW3\Graph.cpp" />
+    <ClCompile Include="..\LW3\GraphFaces.cpp" />
     <ClCompile Include="..\LW3\utils.cpp" />
     <ClCompile Include="LW3_tests.cpp" />
     <ClCompile Include="main.cpp" />
