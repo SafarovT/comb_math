@@ -2,6 +2,26 @@
 #include "../LW3/utils.h"
 #include <sstream>
 
+TEST_CASE("Testing {GetDualGraph}: Two squares")
+{
+    /*std::vector<Vertex> vertices =
+    {
+        Vertex(1, Point2D(1, 1)),
+        Vertex(2, Point2D(2, 1)),
+        Vertex(3, Point2D(2, 2)),
+        Vertex(4, Point2D(1, 2)),
+        Vertex(5, Point2D(1, 3)),
+        Vertex(6, Point2D(2, 3)),
+    };
+
+    std::vector<std::vector<int>> graphAdj =
+    {
+        {1, 2}, {2, 3}, {3, 4}, {4, 1}, {2, 5}, {5, 6}, {3, 6}
+    };
+    GraphStruct graph = { vertices, graphAdj };
+    Graph dualGraph = GetDualGraph(graph);*/
+}
+
 TEST_CASE("Testing {GetDualGraph}: Simple graph")
 {
     std::vector<Vertex> vertices =
