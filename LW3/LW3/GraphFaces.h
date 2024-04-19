@@ -2,7 +2,6 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
-#include <memory>
 #include <string>
 
 class Point2D
@@ -39,22 +38,19 @@ public:
 class Edge
 {
 public:
-	Vertex* from;
-	Vertex* to;
+	Vertex* from = nullptr;
+	Vertex* to = nullptr;
 	double angle;
 	bool visited = false;
 	Edge* next = nullptr;
 	Edge* reverse = nullptr;
 
+	Edge() = default;
 	Edge(Vertex* fromD, Vertex* toD);
 
 	bool operator==(const Edge& edge) const;
 
 	bool operator!=(const Edge& edge) const;
-
-	Vertex GetFrom();
-
-	Vertex GetTo();
 
 	void SetNextEdge(Edge* edge);
 
@@ -62,3 +58,10 @@ public:
 
 	std::string ToString() const;
 };
+
+struct GraphStruct
+{
+	std::vector<Vertex> vertices;
+	std::vector<std::vector<int>> graphAdj;
+};
+

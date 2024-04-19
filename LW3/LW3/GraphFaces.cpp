@@ -15,18 +15,11 @@ bool Vertex::operator==(const Vertex& vertex) const
 
 void Vertex::AddEdge(Edge* edge)
 {
-	std::cout << "adding edge for " << index << std::endl;
 	outboundEdges.push_back(edge);
 }
 
 void Vertex::SortEdges()
 {
-	std::cout << "sorting edges for " << index << ": ";
-	for (auto& el : outboundEdges)
-	{
-		std::cout << el->ToString() << ", ";
-	}
-	std::cout << std::endl;
 	auto compareEdges = [](Edge* e1, Edge* e2) { return e1->angle < e2->angle; };
 	std::sort(outboundEdges.begin(), outboundEdges.end(), compareEdges);
 
@@ -51,7 +44,7 @@ Edge::Edge(Vertex* fromD, Vertex* toD)
 	, to(toD)
 {
 	angle = std::atan2(to->point.y - from->point.y, to->point.x - from->point.x);
-	from->AddEdge(this);
+	// from->AddEdge(this);
 }
 
 bool Edge::operator==(const Edge& edge) const
@@ -62,16 +55,6 @@ bool Edge::operator==(const Edge& edge) const
 bool Edge::operator!=(const Edge& edge) const
 {
 	return !(*this == edge);
-}
-
-Vertex Edge::GetFrom()
-{
-	return *from;
-}
-
-Vertex Edge::GetTo()
-{
-	return *to;
 }
 
 void Edge::SetNextEdge(Edge* edge)
