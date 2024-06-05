@@ -4,4 +4,6 @@
 #include "GraphFaces.h"
 #include "Graph.h"
 
-Graph GetDualGraph(GraphStruct& graph);
+Graph::GraphFaces GetGraphFaces(GraphStruct& graph);
+Graph GetDualGraph(Graph::GraphFaces& faces);
+std::vector<int> ColorGraph(Graph& graph);
